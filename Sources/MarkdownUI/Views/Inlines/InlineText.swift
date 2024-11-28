@@ -10,6 +10,8 @@ struct InlineText: View {
   @State private var inlineImages: [String: Image] = [:]
 
   private let inlines: [InlineNode]
+    
+    @State private var hasLoaded: Bool = false
 
   init(_ inlines: [InlineNode]) {
     self.inlines = inlines
@@ -31,9 +33,24 @@ struct InlineText: View {
         attributes: attributes
       )
     }
-    .task(id: self.inlines) {
-      self.inlineImages = (try? await self.loadInlineImages()) ?? [:]
+    .onAppear {
+        if hasLoaded {
+            
+        } else {
+             print(self.inlines)
+            Task {
+                let downloadImages = (try? await self.loadInlineImages()) ?? [:]
+                
+                DispatchQueue.main.async {
+                    self.inlineImages = downloadImages
+                    self.hasLoaded = true
+                }
+            }
+        }
     }
+//    .task(id: self.inlines) {
+//        self.inlineImages = (try? await self.loadInlineImages()) ?? [:]
+//    }
   }
 
   private func loadInlineImages() async throws -> [String: Image] {
