@@ -100,9 +100,14 @@ private struct TextInlineRenderer {
     }
   }
 
-  private mutating func renderImage(_ source: String) {
+   private mutating func renderImage(_ source: String) {
     if let image = self.images[source] {
-      self.result = self.result + Text(image)
+
+        // 将 Image 视图转换为 Text 视图的形式
+        let imageText = Text(" \(image) ").baselineOffset(-2)
+
+        // 将图像文本添加到结果中
+        self.result = self.result + imageText
     }
   }
 
@@ -119,3 +124,4 @@ private struct TextInlineRenderer {
       )
   }
 }
+
