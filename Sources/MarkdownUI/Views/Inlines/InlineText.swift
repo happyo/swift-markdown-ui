@@ -37,13 +37,9 @@ struct InlineText: View {
       )
     }
     .onAppear {
-        if let image = localImageProvider.localImage(with: "asdf") {
-            print(image)
-        }
         if hasLoaded {
             
         } else {
-             print(self.inlines)
             Task {
                 let downloadImages = (try? await self.loadInlineImages()) ?? [:]
                 
