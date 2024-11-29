@@ -2,6 +2,8 @@ import SwiftUI
 
 struct InlineText: View {
   @Environment(\.inlineImageProvider) private var inlineImageProvider
+    @Environment(\.localImageProvider) private var localImageProvider
+
   @Environment(\.baseURL) private var baseURL
   @Environment(\.imageBaseURL) private var imageBaseURL
   @Environment(\.softBreakMode) private var softBreakMode
@@ -30,10 +32,14 @@ struct InlineText: View {
         ),
         images: self.inlineImages,
         softBreakMode: self.softBreakMode,
-        attributes: attributes
+        attributes: attributes,
+        provider: localImageProvider
       )
     }
     .onAppear {
+        if let image = localImageProvider.localImage(with: "asdf") {
+            print(image)
+        }
         if hasLoaded {
             
         } else {

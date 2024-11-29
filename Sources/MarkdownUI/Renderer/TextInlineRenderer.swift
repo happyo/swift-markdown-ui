@@ -1,27 +1,32 @@
 import SwiftUI
 
+@MainActor
 extension Sequence where Element == InlineNode {
   func renderText(
     baseURL: URL?,
     textStyles: InlineTextStyles,
     images: [String: Image],
     softBreakMode: SoftBreak.Mode,
-    attributes: AttributeContainer
+    attributes: AttributeContainer,
+    provider: LocalImageProvider
   ) -> Text {
     var renderer = TextInlineRenderer(
       baseURL: baseURL,
       textStyles: textStyles,
       images: images,
       softBreakMode: softBreakMode,
-      attributes: attributes
+      attributes: attributes,
+      provider: provider
     )
     renderer.render(self)
     return renderer.result
   }
 }
 
+@MainActor
 private struct TextInlineRenderer {
   var result = Text("")
+//    @Environment(\.localImageProvider) private var localImageProvider
 
   private let baseURL: URL?
   private let textStyles: InlineTextStyles
@@ -29,19 +34,22 @@ private struct TextInlineRenderer {
   private let softBreakMode: SoftBreak.Mode
   private let attributes: AttributeContainer
   private var shouldSkipNextWhitespace = false
+    private var provider: LocalImageProvider
 
   init(
     baseURL: URL?,
     textStyles: InlineTextStyles,
     images: [String: Image],
     softBreakMode: SoftBreak.Mode,
-    attributes: AttributeContainer
+    attributes: AttributeContainer,
+    provider: LocalImageProvider
   ) {
     self.baseURL = baseURL
     self.textStyles = textStyles
     self.images = images
     self.softBreakMode = softBreakMode
     self.attributes = attributes
+      self.provider = provider
   }
 
   mutating func render<S: Sequence>(_ inlines: S) where S.Element == InlineNode {
@@ -101,14 +109,18 @@ private struct TextInlineRenderer {
   }
 
    private mutating func renderImage(_ source: String) {
-    if let image = self.images[source] {
+       if let image = provider.localImage(with: source) {
+           let imageText = Text(" \(image) ").baselineOffset(-2)
 
-        // 将 Image 视图转换为 Text 视图的形式
-        let imageText = Text(" \(image) ").baselineOffset(-2)
+           self.result = self.result + imageText
+       } else if let tempImage = images[source]  {
+//           var tempImage = Image(systemName: "star.fill")
+           // 将 Image 视图转换为 Text 视图的形式
+           let imageText = Text(" \(tempImage) ").baselineOffset(-2)
 
-        // 将图像文本添加到结果中
-        self.result = self.result + imageText
-    }
+           // 将图像文本添加到结果中
+           self.result = self.result + imageText
+       }
   }
 
   private mutating func defaultRender(_ inline: InlineNode) {
