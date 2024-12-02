@@ -109,18 +109,19 @@ private struct TextInlineRenderer {
   }
 
    private mutating func renderImage(_ source: String) {
-       if let image = provider.localImage(with: source) {
-           let imageText = Text(" \(image) ").baselineOffset(-2)
-
-           self.result = self.result + imageText
-       } else if let tempImage = images[source]  {
-//           var tempImage = Image(systemName: "star.fill")
-           // 将 Image 视图转换为 Text 视图的形式
-           let imageText = Text(" \(tempImage) ").baselineOffset(-2)
-
-           // 将图像文本添加到结果中
-           self.result = self.result + imageText
-       }
+//       if let image = provider.localImage(with: source) {
+//           var tempImage = Image(systemName: "star")
+//           let imageText = Text(" \(image) ").baselineOffset(-2)
+//
+//           self.result = self.result + imageText
+//       } else if let tempImage = images[source]  {
+////           var tempImage = Image(systemName: "star.fill")
+//           // 将 Image 视图转换为 Text 视图的形式
+//           let imageText = Text(" \(tempImage) ").baselineOffset(-2)
+//
+//           // 将图像文本添加到结果中
+//           self.result = self.result + imageText
+//       }
   }
 
   private mutating func defaultRender(_ inline: InlineNode) {
