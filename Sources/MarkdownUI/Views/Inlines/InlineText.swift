@@ -2,7 +2,7 @@ import SwiftUI
 
 struct InlineText: View {
   @Environment(\.inlineImageProvider) private var inlineImageProvider
-    @Environment(\.localImageProvider) private var localImageProvider
+    @Environment(\.localImageCache) private var localImageProvider
 
   @Environment(\.baseURL) private var baseURL
   @Environment(\.imageBaseURL) private var imageBaseURL
@@ -44,6 +44,7 @@ struct InlineText: View {
                 let downloadImages = (try? await self.loadInlineImages()) ?? [:]
                 
                 DispatchQueue.main.async {
+                    self.localImageProvider?.images = downloadImages
                     self.inlineImages = downloadImages
                     self.hasLoaded = true
                 }

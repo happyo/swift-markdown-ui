@@ -11,8 +11,8 @@ extension View {
     self.environment(\.inlineImageProvider, inlineImageProvider)
   }
     
-    public func markdownLocalImageProvider(_ localImageProvider: LocalImageProvider) -> some View {
-        self.environment(\.localImageProvider, localImageProvider)
+    public func markdownLocalImageCache(_ localImageCache: LocalImageCache) -> some View {
+        self.environment(\.localImageCache, localImageCache)
       }
 }
 
@@ -27,31 +27,13 @@ private struct InlineImageProviderKey: EnvironmentKey {
   static let defaultValue: InlineImageProvider = .default
 }
 
-extension EnvironmentValues {
-    var localImageProvider: LocalImageProvider {
-      get { self[LocalImageProviderKey.self] }
-      set { self[LocalImageProviderKey.self] = newValue }
+public struct LocalImageCacheKey: EnvironmentKey {
+    public static let defaultValue: LocalImageCache? = nil
+}
+
+public extension EnvironmentValues {
+    var localImageCache: LocalImageCache? {
+        get { self[LocalImageCacheKey.self] }
+        set { self[LocalImageCacheKey.self] = newValue }
     }
-}
-
-private struct LocalImageProviderKey: EnvironmentKey {
-  static let defaultValue: LocalImageProvider = .default
-}
-
-
-/// The default inline image provider, which loads images from the network.
-public struct DefaultLocalImageProvider: LocalImageProvider {
-    public func localImage(with urlString: String) -> Image? {
-        return nil
-    }
-}
-
-extension LocalImageProvider where Self == DefaultLocalImageProvider {
-  /// The default inline image provider, which loads images from the network.
-  ///
-  /// Use the `markdownInlineImageProvider(_:)` modifier to configure
-  /// this image provider for a view hierarchy.
-  public static var `default`: Self {
-    .init()
-  }
 }

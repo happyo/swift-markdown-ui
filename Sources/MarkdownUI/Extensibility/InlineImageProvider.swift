@@ -15,6 +15,24 @@ public protocol InlineImageProvider {
   func image(with url: URL, label: String) async throws -> Image
 }
 
-public protocol LocalImageProvider {
-    func localImage(with urlString: String) -> Image?
+//public protocol LocalImageProvider {
+//    func localImage(with urlString: String) -> Image?
+//}
+
+
+@MainActor
+public class LocalImageCache: ObservableObject, Sendable {
+    @Published public var images: [String: Image] = [:]
+    
+    public init() {
+        
+    }
+    
+    public func image(for urlString: String) -> Image? {
+        return images[urlString]
+    }
+    
+    public func setImage(_ image: Image, for urlString: String) {
+        images[urlString] = image
+    }
 }
